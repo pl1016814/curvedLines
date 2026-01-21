@@ -12,7 +12,7 @@ img = cv.resize(img, (512, 233), interpolation=cv.INTER_AREA)
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 #gaussian blur as stated in documentation doesn't work for my soda can, idk why
 gray = cv.GaussianBlur(img, (7, 7), 1.5)
-cannyProcess = cv.Canny(gray, 140, 150)
+cannyProcess = cv.Canny(gray, 135, 145)
 
 
 # turns scattered pixels into groups of lines
@@ -24,12 +24,12 @@ contours, hierarchy = cv.findContours(cannyProcess, cv.RETR_EXTERNAL, cv.CHAIN_A
 
 # contours need to be reshaped because OpenCV has an extra bracket around each point
 # "-1" means it figures out the amount of rows mathematically, and "2" means it will make the array have 2 columns
-points = contours[0]
-# contour pixel coordinates are integers; however, linefitting needs floats instead of integers
-#points = points.astype(np.float32)
-for i in range(len(points)):
-    cv.circle(img, (int(points[i].item(0)), int(points[i].item(1))), 2, (0, 255, 0), 2)
 
-cv.imshow("Curved Lines Detection", cannyProcess)
+for contour in contours:
+    if cv.arcLength(contour, True) > 100:
+        cv.drawContours(img, contour, -1, (0, 255, 0), 2)
+        np.polyfit(contour[:, :, 1], contour[:, :, 0], 1)
+
+cv.imshow("Curved Lines Detection", img)
 cv.waitKey(0)
 cv.destroyAllWindows()
