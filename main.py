@@ -25,10 +25,21 @@ contours, hierarchy = cv.findContours(cannyProcess, cv.RETR_EXTERNAL, cv.CHAIN_A
 # contours need to be reshaped because OpenCV has an extra bracket around each point
 # "-1" means it figures out the amount of rows mathematically, and "2" means it will make the array have 2 columns
 
+trueContours = []
+contourEquations = []
+centerLine = [[]]
 for contour in contours:
     if cv.arcLength(contour, True) > 100:
         cv.drawContours(img, contour, -1, (0, 255, 0), 2)
-        np.polyfit(contour[:, :, 1], contour[:, :, 0], 1)
+        #trueContours.append(contour)
+        contourEquations.append(np.polyfit((contours[0][:][0]).flatten(), (contours[0][:][1]).flatten(), 2))
+#for contour in trueContours:
+    #contourEquations.append(np.polyfit((contours[0][:][0]).flatten(), (contours[0][:][1]).flatten(), 2))
+for i in range(len(contourEquations)):
+    for j in range(len(contourEquations[i])):
+        centerLine[i].append(np.mean(contourEquations[i]))
+print(centerLine)
+
 
 cv.imshow("Curved Lines Detection", img)
 cv.waitKey(0)
