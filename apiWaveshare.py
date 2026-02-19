@@ -7,26 +7,22 @@ from threading import Lock, Event
 from pathlib import Path
 import json, time, threading
 
-from Adafruit_PCA9685 import PCA9685
+from PCA9685 import PCA9685
 
 # --------------- hardware init ---------------
-pwm = PCA9685(0x40)
-pwm.set_pwm_freq(50)
+pwm = PCA9685(0x40, debug=False)
+pwm.setPWMFreq(50)
 
 
 def _set_dutycycle(channel: int, percent: int):
     """Set PWM duty cycle. percent: 0-100."""
     percent = max(0, min(100, percent))
-    off_val = int(percent * 4095 / 100)
-    pwm.set_pwm(channel, 0, off_val)
+    pwm.setDutycycle(channel, percent)
 
 
 def _set_level(channel: int, level: int):
     """Set a channel fully HIGH (1) or fully LOW (0)."""
-    if level:
-        pwm.set_pwm(channel, 0, 4095)
-    else:
-        pwm.set_pwm(channel, 0, 0)
+    pwm.setLevel(channel, 1 if level else 0)
 
 
 class MotorDriver:
